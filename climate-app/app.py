@@ -1,9 +1,15 @@
 from flask import Flask, jsonify, render_template
 import requests
-from bs4 import BeautifulSoup
 import os
+from dotenv import load_dotenv
+
+# .env 파일 로드
+load_dotenv()
 
 app = Flask(__name__)
+
+# 환경변수에서 API 키 불러오기
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 @app.route('/')
 def index():
@@ -11,24 +17,21 @@ def index():
 
 @app.route('/weather', methods=['GET'])
 def get_weather():
-    url = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=%EB%82%A0%EC%94%A8"
-    headers = {
-        "User-Agent": "Mozilla/5.0"
-    }
+    city = "Seoul"
+    url = (
+        f"https://api.openweathermap.org/data/2.5/weather"
+        f"?q={city}&appid={API_KEY}&units=metric&lang=kr"
+    )
 
     try:
-        res = requests.get(url, headers=headers)
+        res = requests.get(url)
         res.raise_for_status()
-        soup = BeautifulSoup(res.text, "html.parser")
+        data = res.json()
 
-        address = soup.find('h2', {'class': 'title'}).text.strip()
-        temperature = soup.find('div', {'class': 'temperature_text'}).text.strip()
-        jawea = soup.find('li', {'class': 'item_today level3'}).text.strip()
+        address = f"{data['name']}, {data['sys']['country']}"
+        temperature = f"{data['main']['temp']}°C"
+        jawea = data['weather'][0]['description']
 
-        # 콘솔에도 출력 (디버깅용)
-        print(f"> 위치: {address}\\n> 온도: {temperature}\\n> 자외선: {jawea}")
-
-        # 🔥 여기서 실제로 응답을 반환해야 웹에서 볼 수 있음
         return jsonify({
             "address": address,
             "temperature": temperature,

@@ -1,13 +1,18 @@
-// 🌡 실시간 날씨 데이터 불러오기
+const API_KEY = "여기에_본인_API_키_입력";  // OpenWeatherMap에서 발급받은 키
+
 function getWeather() {
-  fetch("https://climate-app-wbol.onrender.com")
+  const city = "Seoul";
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=kr`;
+
+  fetch(url)
     .then(res => res.json())
     .then(data => {
-      if (data.error) throw new Error(data.error);
+      if (data.cod !== 200) throw new Error(data.message);
+
       const result = `
-        <p>📍 위치: ${data.address}</p>
-        <p>🌡 온도: ${data.temperature}</p>
-        <p>☀️ 자외선: ${data.jawea}</p>
+        <p>📍 위치: ${data.name}, ${data.sys.country}</p>
+        <p>🌡 온도: ${data.main.temp}°C</p>
+        <p>☁️ 날씨: ${data.weather[0].description}</p>
       `;
       document.getElementById("result").innerHTML = result;
     })
