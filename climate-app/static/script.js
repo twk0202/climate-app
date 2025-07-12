@@ -1,6 +1,6 @@
 // 🌡 실시간 날씨 데이터 불러오기
 function getWeather() {
-  fetch("/weather")
+  fetch("https://climate-app-wbol.onrender.com")
     .then(res => res.json())
     .then(data => {
       if (data.error) throw new Error(data.error);
