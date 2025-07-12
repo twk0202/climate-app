@@ -1,18 +1,13 @@
-const API_KEY = "여기에_본인_API_키_입력";  // OpenWeatherMap에서 발급받은 키
-
 function getWeather() {
-  const city = "Seoul";
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=kr`;
-
-  fetch(url)
+  fetch("/weather")
     .then(res => res.json())
     .then(data => {
-      if (data.cod !== 200) throw new Error(data.message);
+      if (data.error) throw new Error(data.error);
 
       const result = `
-        <p>📍 위치: ${data.name}, ${data.sys.country}</p>
-        <p>🌡 온도: ${data.main.temp}°C</p>
-        <p>☁️ 날씨: ${data.weather[0].description}</p>
+        <p>📍 위치: ${data.address}</p>
+        <p>🌡 온도: ${data.temperature}</p>
+        <p>☁️ 날씨: ${data.description}</p>
       `;
       document.getElementById("result").innerHTML = result;
     })
@@ -22,7 +17,6 @@ function getWeather() {
     });
 }
 
-// 📈 평균기온 변화 그래프
 window.addEventListener('DOMContentLoaded', () => {
   const ctx = document.getElementById('globalTempChart').getContext('2d');
 
@@ -66,32 +60,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
   new Chart(ctx, {
     type: 'line',
-    data: {
-      labels: labels,
-      datasets: datasets
-    },
+    data: { labels, datasets },
     options: {
       responsive: true,
       plugins: {
-        legend: {
-          labels: { color: '#fff' }
-        }
+        legend: { labels: { color: '#fff' } }
       },
       scales: {
         x: {
-          title: {
-            display: true,
-            text: 'Year',
-            color: '#fff'
-          },
+          title: { display: true, text: 'Year', color: '#fff' },
           ticks: { color: '#fff' }
         },
         y: {
-          title: {
-            display: true,
-            text: 'Temperature Anomaly (°C)',
-            color: '#fff'
-          },
+          title: { display: true, text: 'Temperature Anomaly (°C)', color: '#fff' },
           ticks: { color: '#fff' }
         }
       }
