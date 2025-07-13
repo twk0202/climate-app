@@ -11,7 +11,7 @@ API_KEY1 = os.getenv("OPENWEATHER_API_KEY")
 API_KEY2 = os.getenv("GOOGLE_GEMINI_API_KEY")
 
 genai.configure(api_key=API_KEY2)
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 @app.route('/')
 def index():
